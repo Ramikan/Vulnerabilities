@@ -1,2 +1,2 @@
 # Misc
-Usefull scripts used during the redteaming.
+Vulnerabilities found during the tests.
