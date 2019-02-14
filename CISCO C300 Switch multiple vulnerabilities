@@ -10,16 +10,17 @@
 
 
 Vulnerability 1:Information Gathering
+Unauthenticated user can find the version number and device type by visiting this link directly.
 
 Affected URL:
 
 /cs703dae2c/device/English/dictionaryLogin.xml
 
 
-Vulnerability 2: Open Redirect affected due to host header.
+Vulnerability 2: Open Redirect due to host header.
 
 
-Can change to different domain and redirect the request to fake website and can cause phishing attack.
+Can change to different domain under the host header and redirect the request to fake website and can be used for phishing attack.
 
 Normal Request
 
@@ -50,7 +51,7 @@ Location: https://10.21.151.120/cs703dae2c/
 
 POC Request:
 
-Host Headerchanged to different domain.
+Host Header changed to different domain (example google.com).
 
 
 GET /cs703dae2c HTTP/1.1
@@ -81,5 +82,5 @@ Location: http://google.com/cs703dae2c/config/log_off_page.htm
                         </body></html>
 
 
-
+The redirection is happening to http://google.com/cs703dae2c/config/log_off_page.htm. The attacker nned to be in same network and should be able to modify the victims request on the wire in order to trigger this vulnerabilty.
 
