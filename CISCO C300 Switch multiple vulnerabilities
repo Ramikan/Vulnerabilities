@@ -82,5 +82,5 @@ Location: http://google.com/cs703dae2c/config/log_off_page.htm
                         </body></html>
 
 
-The redirection is happening to http://google.com/cs703dae2c/config/log_off_page.htm. The attacker nned to be in same network and should be able to modify the victims request on the wire in order to trigger this vulnerabilty.
+The redirection is happening to http://google.com/cs703dae2c/config/log_off_page.htm. The attacker need to be in same network and should be able to modify the victims request on the wire in order to trigger this vulnerabilty.
 
