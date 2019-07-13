@@ -2,7 +2,8 @@
 # Shodan query: /config/log_off_page.html
 # Discovered Date: 07/03/2014
 # Reported Date: 08/04/2019
-# Exploit Author: Ramikan
+# Exploit Author: Ramikan 
+# Website: http://fact-in-hack.blogspot.com
 # Vendor Homepage:https://www.cisco.com/c/en/us/products/switches/small-business-300-series-managed-switches/index.html
 # Affected Devices:  The affected products are “all Cisco Small Business 200, 300, and 500 Series Managed Switches with the web management interface enabled,” 
 # Tested On: Cisco C300 Switch
