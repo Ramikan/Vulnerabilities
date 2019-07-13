@@ -1,10 +1,10 @@
 # Exploit Title: CISCO Small Business 200, 300, 500 Switches Multiple Vulnerabilities.
-# Google Dork: /cs703dae2c
+# Shodan query: /config/log_off_page.html
 # Discovered Date: 07/03/2014
 # Reported Date: 08/04/2019
 # Exploit Author: Ramikan
 # Vendor Homepage:https://www.cisco.com/c/en/us/products/switches/small-business-300-series-managed-switches/index.html
-# Affected Devices:  The affected products are “all Cisco Small Business 200, 300, and 500 Series Managed Switches with the web management interface enabled,” except for: Cisco Small Business 250, 350, 550 Series Switches Cisco Small Business 220 Series Smart Switches & Cisco ESW2 Series Managed Switches.
+# Affected Devices:  The affected products are “all Cisco Small Business 200, 300, and 500 Series Managed Switches with the web management interface enabled,” 
 # Tested On: Cisco C300 Switch
 # Version: 1.3.7.18
 # CVE : CVE-2019-1943
