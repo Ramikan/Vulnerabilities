@@ -2,7 +2,7 @@
 # Google Dork: intitle:"netscaler gateway" intext:password "please log on" 
 # Discovered Date: 07/03/2014
 # Exploit Author: Ramikan 
-# Website: http://fact-in-hack.blogspot.com
+# Website: https://fact-in-hack.blogspot.com/2019/07/citrix-netscaler-gateway-information.html
 # Vendor Homepage:https://www.citrix.com/products/citrix-gateway/
 # Affected Devices: citrix-gateway   
 # Tested On: citrix-gateway 11.1.53.11, 12.0.61.8
