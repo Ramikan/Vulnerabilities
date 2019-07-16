@@ -9,8 +9,7 @@
 # Version: 11.X through 12.0.X may be affected on other versions too.
 # CVE : 
 # Category:Hardware, Web Apps
-# Reference : 
-
+# Reference : https://github.com/Ramikan/Vulnerabilities/
 *************************************************************************************************************************************
 
 Vulnerability : Information Gathering
@@ -19,7 +18,9 @@ Access the below link directly, which will disclose the version number and also 
 
 https://<ip address>/vpn/pluginlist.xml
 
+*************************************************************************************************************************************
 Output:
+*************************************************************************************************************************************
 
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <repositories>
