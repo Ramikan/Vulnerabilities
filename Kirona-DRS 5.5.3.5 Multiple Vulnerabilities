@@ -1,10 +1,11 @@
 
-# Exploit Title: Kirona-DRS 5.5.3.5 Multiple Vulnerabilities.
+# Exploit Title: Kirona-DRS version 5.5.3.5 Multiple Vulnerabilities.
 # Discovered Date: 03/10/2019
+# Shodan Search: /opt-portal/pages/login.xhtml
 # Exploit Author: Ramikan
-# Vendor Homepage: https://www.kirona.com/solutions/dynamic-resource-scheduling/
-# Affected Version: 5.5.3.5 may be other versions.
-# Tested On Version: 5.5.3.5 on PHP/5.6.14
+# Vendor Homepage: https://www.kirona.com/products/dynamic-resource-scheduler/
+# Affected Version: DRS 5.5.3.5 may be other versions.
+# Tested On Version: DRS 5.5.3.5 on PHP/5.6.14
 # Vendor Fix: Unknown
 # CVE: N/A	
 # Category: Web Apps
@@ -13,15 +14,18 @@
 ***************************************************************************************************************************
 
 Description:
+ 
+The application is vulnerable to the HTML injection, reflected cross site scripting and sensitive data disclosure.
 
-The application is vulnerable to the HTML injection, cross site scripting and sensitive data disclosure.
 
 ***************************************************************************************************************************
 Vulnerabiity 1:HTML injection and XSS
 ***************************************************************************************************************************
+A reflected HTML injection vulnerability on Kirona DRS 5.5.3.5 allows remote attackers to inject arbitrary HTML elements via the 'password' parameter.
 
-Affected URL: /osm/report/
+A reflected Cross-site scripting (XSS) vulnerability in Kirona DRS 5.5.3.5 allows remote attackers to inject arbitrary web script via the 'password' parameter.
 
+Affected URL: /osm/report/ 
 
 Affected Parameter: password
 
@@ -125,9 +129,13 @@ Content-Type: text/html;charset=UTF-8
 Vulnerability 2: Source code and sensitive data disclosure.
 ***************************************************************************************************************************
 
-Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database through the SQL query. This file exposes the sql database information such asDatabase version, tablename, column name, etc.
+An Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database. This file exposes the sql database information such as Database version, tablename, column name, etc.
 
 https://10.0.0.148/osm/REGISTER.cmd
+
+Live example:
+
+https://79.174.169.85/osm/REGISTER.cmd
 
 http://82.196.226.108/osm_tiles/REGISTER.cmd
 
