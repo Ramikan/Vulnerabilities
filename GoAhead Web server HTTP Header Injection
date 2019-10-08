@@ -6,9 +6,9 @@
 # Vendor Homepage: https://www.embedthis.com/goahead/
 # Affected Version: 2.5.0 may be others.
 # Tested On Version: 2.5.0 in Cisco Switches and Net Gear routers.
-# Vendor Fix: N/A
-# CVE : N/A
-# CVSS v3: N/A
+# Vendor Fix: Update to latest Version
+# CVE : CVE-2019-16645
+# CVSS v3.1: 8.6 ( AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:N)
 # Category: Hardware, Web Apps
 # Reference : www.fact-in-hack.blogspot.com
 
@@ -99,4 +99,6 @@ Initial Investigation:
 Potentially affected Part of the source code in GoAhead web server is in the ’http.c’ file, which contains 'host' parameter.
 https://github.com/embedthis/goahead/blob/master/src/http.c
 
+Remediation:
 
+Update to latest version.
