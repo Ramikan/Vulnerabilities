@@ -19,7 +19,7 @@ The application is vulnerable to the HTML injection, reflected cross site script
 
 
 ***************************************************************************************************************************
-Vulnerabiity 1:HTML injection and  (CVE-2019-17504)
+Vulnerabiity 1: HTML injection and  Cross Site Scripting (CVE-2019-17504)
 ***************************************************************************************************************************
 An issue was discovered in Kirona Dynamic Resource Scheduling (DRS) 5.5.3.5. A reflected Cross-site scripting (XSS) vulnerability allows remote attackers to inject arbitrary web script via the /osm/report/ 'password' parameter.
 
