@@ -1,5 +1,5 @@
 # Exploit Title: Spiceworks version 7.5 HTTP Header Injection.
-# Shodan Query: 
+# Google Dork: inurl:/pro_users/login
 # Discovered Date: 15/09/2020
 # Exploit Author: Ramikan
 # Vendor Homepage: https://www.spiceworks.com
