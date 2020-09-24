@@ -1,5 +1,6 @@
 
 Affected Product: RICOH MP C4503 Web Image Monitor
+Affected Version: 1.06, 1.09, 1.14
 
 Vulnerability: Cross site scripting (Reflected) & HTML injection
 
