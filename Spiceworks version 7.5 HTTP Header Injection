@@ -5,7 +5,7 @@
 # Vendor Homepage: https://www.spiceworks.com
 # Affected Version: 7.5.7.0 may be others.
 # Tested On Version: 7.5.7.0 
-# CVE : 
+# CVE : CVE-2020-25901
 # CVSS v3.1: 8.6 (AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:N)
 # Category: Hardware, Web Apps
 # Reference : www.fact-in-hack.blogspot.com
