@@ -5,7 +5,7 @@
 # Vendor Homepage: https://www.watchgaurd.com
 # Affected :XTM5 series
 # Vendor Fix: Update to latest Version
-# CVE : 
+# CVE : CVE-2021-27997
 # CVSS v3.1: 8.6 ( AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:H/A:N)
 # Category: Hardware, Web Apps
 # Reference : www.fact-in-hack.blogspot.com
