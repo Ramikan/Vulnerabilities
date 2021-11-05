@@ -7,7 +7,7 @@
 # Affected Product: RICOH MP C4503 Web Image Monitor
 # Affected Version: 1.06, 1.09, 1.14
 # Vendor Fix: Unknown
-# CVE: 
+# CVE: CVE-2020-36020
 # Category: Web Apps, Hardware
 # Reference : https://github.com/Ramikan/Vulnerabilities/blob/master/RICOH MP C4503 Web Image Monitor XSS and HTML injection
 # Blog: www.fact-in-hack.blogspot.com
