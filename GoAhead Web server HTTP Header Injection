@@ -101,4 +101,5 @@ https://github.com/embedthis/goahead/blob/master/src/http.c
 
 Remediation:
 
-Update to latest version.
+Deploy GoAhead 5.1.6.
+https://github.com/embedthis/goahead/issues/309
